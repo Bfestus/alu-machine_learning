@@ -1,6 +1,7 @@
 # Calculus
 
 This project covers various mathematical concepts including series, derivatives, and integrals. 
+most of them are multiple choice questions
 
 ## Requirements
 
