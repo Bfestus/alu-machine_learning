@@ -1,34 +1,28 @@
 #!/usr/bin/env python3
-'''Returns the list of ships'''
+"""Creating a method that returns the list of ships
+that can hold a given number of passengers"""
+
 import requests
 
 
 def availableShips(passengerCount):
-    """Returns the list of ships that can hold at least
-    the given number of passengers."""
-    url = 'https://swapi-api.alx-tools.com/api/starships'
-    ships = []
+    """Returns a list of ships"""
+    main_url = "https://swapi-api.alx-tools.com/api/starships/?page=1"
 
-    while url:
-        response = requests.get(url)
-        if response.status_code != 200:
-            return []  # If the request fails, return an empty list
+    res = requests.get(main_url)
 
-        data = response.json()
-
-        for ship in data['results']:
-            # Some starships have 'unknown' or empty passengers field,
-            # so we skip those
+    output = []
+    while res.status_code == 200:
+        res = res.json()
+        for ship in res['results']:
+            passengers = ship['passengers'].replace(',', '')
             try:
-                # Remove commas from passenger numbers
-                passengers = ship['passengers'].replace(',', '')
-
-                if passengers.isdigit() and int(passengers) >= passengerCount:
-                    ships.append(ship['name'])
+                if int(passengers) >= passengerCount:
+                    output.append(ship['name'])
             except ValueError:
-                continue
-
-        # Handle pagination by checking if there's a 'next' page
-        url = data['next']
-
-    return ships
+                pass
+        try:
+            res = requests.get(res['next'])
+        except Exception:
+            break
+    return output
